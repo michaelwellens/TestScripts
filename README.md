@@ -41,7 +41,7 @@ Or, you can run any arbitrary command in a subshell with the desired version of 
 
 You can also get the path to the executable to where it was installed:
 
-nvm which 5.0
+	nvm which 5.0
 
 v8-debug does not work with Node 7 or up, try downgrading to 6.
 To do so install node 6.6.0
