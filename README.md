@@ -1,6 +1,10 @@
 # This is a repository for basic testing scripts for Teensy, Arduino, Jetson and Raspberry Pi
 
-On this moment only a script for serial communication in nodejs with the module Serialport is included.
+On this moment the following are included:
+	- Serial communication for teensy 3.2
+	- Serial Serial_Communication for the JetsonTX1 in node js
+	- GPIO acces in node js for the Jetson TX1
+	- Custom library for GPIO in node js for the Jetson TX1 (under construction)
 
 # Usage
 
@@ -48,5 +52,14 @@ To do so install node 6.6.0
 
 	
 	nvm install 6.6.0
+
+## Running script
+use the following command to run a node script:
+
+	node script_name.js
+
+# To Do
+
+	-[] Completing gpio library for the JetsonTX1 in node js
 
 
