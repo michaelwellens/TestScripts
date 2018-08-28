@@ -4,7 +4,7 @@
 
 Install this module with:
 
-	npm install gpio-jetson-tx1-tx2
+	npm install gpio-jetsontx1tx2
 
 And import it with:
 
