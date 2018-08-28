@@ -29,7 +29,7 @@ exports.export = function(pin, cb){
     export_Pin(pin, cb);
 }
 
-exports.derection = function(pin, mode, cb){
+exports.direction = function(pin, mode, cb){
     direction_Pin(pin, mode, cb);
 }
 
