@@ -1,6 +1,6 @@
 {
   "name": "gpio-jetsontx1tx2",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "This is a package for read and write functions of the gpio pins on the jetson tx1/tx2 in node in the same fashion as raspberry pi and beaglebone. ",
   "main": "index.js",
   "scripts": {

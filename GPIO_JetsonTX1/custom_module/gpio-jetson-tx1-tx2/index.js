@@ -137,53 +137,63 @@ function write_Pin(pin,value, cb /*err*/){
         var writepin = exec('echo '+pin_value+' > /sys/class/gpio/gpio' + pin_nr + '/value', function(err,stdout,stderr){
             if(err){
                 console.log('Error on setting value for pin ' + pin_nr + ' ' + err.toString());
+
                 return err;
             }
-            console.log('stdout at setting value for ' + pin_nr + ' ' + stdout.toString());
-            console.log('stderr at setting value for ' + pin_nr + ' ' + stderr.toString());
+            //console.log('stdout at setting value for ' + pin_nr + ' ' + stdout.toString());
+            //console.log('stderr at setting value for ' + pin_nr + ' ' + stderr.toString());
 
             console.log('pin ' + pin_nr + ' value is set to ' + pin_value);
         })
     } else{
         // First export the pin
+
         var exportpin = exec('echo '+pin_nr+' > /sys/class/gpio/export', function(err,stdout,stderr){
-            if(err){
-                console.log('Error on export pin ' + pin_nr + ' ' + err.toString());
-                return err;
-            }
-            console.log('stdout at export ' + pin_nr + ' ' + stdout.toString());
-            console.log('stderr at export pin ' + pin_nr + ' ' + stderr.toString());
+                        if(err){
 
-            console.log('pin ' + pin_nr +  ' is exported');
+                            if(!exportedOutPins.includes(pin)){
+                                //console.log('pushing pin '+pin_nr+'in list ignore error');
+                                exportedOutPins.push((pin));
+                            } else{
+                                console.log('Error on export pin ' + pin_nr + ' ' + err.toString());
+                            }
 
-            exportedOutPins.push(pin);
+                           return err;
+                       }
+                       //console.log('stdout at export ' + pin_nr + ' ' + stdout.toString());
+                       //console.log('stderr at export pin ' + pin_nr + ' ' + stderr.toString());
 
-            // Second set the direction of the pin either in or out but for writing out is the logical choise
-            var direction = exec('echo '+mode_pin+' > /sys/class/gpio/gpio' + pin_nr + '/direction', function(err,stdout,stderr){
-                if(err){
-                    console.log('Error on direction pin ' + pin_nr + ' ' + err.toString());
-                    return err;
-                }
-                console.log('stdout at direction ' + pin_nr + ' ' + stdout.toString());
-                console.log('stderr at direction pin ' + pin_nr + ' ' + stderr.toString());
+                       //console.log('pin ' + pin_nr +  ' is exported');
 
-                console.log('pin ' + pin_nr + ' direction is set');
+                       exportedOutPins.push(pin);
 
-                // After export en setting direction the value 1 or 0 can be written to the pin
-                var writepin = exec('echo '+pin_value+' > /sys/class/gpio/gpio' + pin_nr + '/value', function(err,stdout,stderr){
-                    if(err){
-                        console.log('Error on setting value for pin ' + pin_nr + ' ' + err.toString());
-                        return err;
-                    }
-                    console.log('stdout at setting value for ' + pin_nr + ' ' + stdout.toString());
-                    console.log('stderr at setting value for ' + pin_nr + ' ' + stderr.toString());
+                       // Second set the direction of the pin either in or out but for writing out is the logical choise
+                       var direction = exec('echo '+mode_pin+' > /sys/class/gpio/gpio' + pin_nr + '/direction', function(err,stdout,stderr){
+                           if(err){
+                               console.log('Error on direction pin ' + pin_nr + ' ' + err.toString());
+                               return err;
+                           }
+                           //console.log('stdout at direction ' + pin_nr + ' ' + stdout.toString());
+                           //console.log('stderr at direction pin ' + pin_nr + ' ' + stderr.toString());
 
-                    console.log('pin ' + pin_nr + ' value is set to ' + pin_value);
+                           //console.log('pin ' + pin_nr + ' direction is set');
+
+                           // After export en setting direction the value 1 or 0 can be written to the pin
+                           var writepin = exec('echo '+pin_value+' > /sys/class/gpio/gpio' + pin_nr + '/value', function(err,stdout,stderr){
+                               if(err){
+                                   console.log('Error on setting value for pin ' + pin_nr + ' ' + err.toString());
+                                   return err;
+                               }
+                               //console.log('stdout at setting value for ' + pin_nr + ' ' + stdout.toString());
+                               //console.log('stderr at setting value for ' + pin_nr + ' ' + stderr.toString());
+
+                               console.log('pin ' + pin_nr + ' value is set to ' + pin_value);
 
 
-                })
-            })
-        })
+                           })
+                       })
+                   })
+
     }
 }
 
@@ -196,25 +206,40 @@ function read_Pin(pin, mode, cb /*err*/){
     cb = cb || function(){}
 
     // Check if the pin is not been already exported
-    if(!exportedOutPins.includes(pin)){
+    if(exportedOutPins.includes(pin)){
+        var readPin = exec('cat /sys/class/gpio/gpio'+pin_nr+'/value', function(err, stdout, stderr){
+            if(err){
+                console.log('error on reading '+pin_nr+' :'  + err.toString());
+            }
+            //console.log('stdout at reading: ' + stdout.toString());
+            //console.log('stderr at reading: ' + stderr.toString());
+        })
+
+    } else{
+
         var echo_1 = exec('echo '+pin_nr+' > /sys/class/gpio/export', function(error, stdout, stderr){
             if(error){
-                console.log('exec error on define pin '+pin_nr+': ' + error.toString());
+                if(!exportedOutPins.includes(pin)){
+                    console.log('pushing pin in list')
+                    exportedOutPins.push(pin);
+                } else{
+                    console.log('exec error on define pin '+pin_nr+': ' + error.toString());
+                }
                 return;
             }
-            console.log('stdout at define: ' + stdout.toString());
-            console.log('stderr at define: ' + stderr.toString());
+            //console.log('stdout at define: ' + stdout.toString());
+            //console.log('stderr at define: ' + stderr.toString());
 
             exportedOutPins.push(pin);
-            
+
             var echo_2 = exec('echo '+mode_pin+' > /sys/class/gpio/gpio'+pin_nr+'/direction', function(error, stdout, stderr){
                 if(error){
                     console.log('exec error on set pin '+pin_nr+' direction: ' + error.toString());
                     return;
                 }
-                console.log('stdout at direction: ' + stdout.toString());
-                console.log('stdout at direction: ' + stderr.toString());
-                
+                //console.log('stdout at direction: ' + stdout.toString());
+                //console.log('stdout at direction: ' + stderr.toString());
+
                 var readPin = exec('cat /sys/class/gpio/gpio'+pin_nr+'/value', function(err, stdout, stderr){
                     if(err){
                         console.log('error on reading '+pin_nr+' :'  + err.toString());
@@ -223,14 +248,6 @@ function read_Pin(pin, mode, cb /*err*/){
                     console.log('stderr at reading: ' + stderr.toString());
                 })
             })
-        })
-    } else{
-        var readPin = exec('cat /sys/class/gpio/gpio'+pin_nr+'/value', function(err, stdout, stderr){
-            if(err){
-                console.log('error on reading '+pin_nr+' :'  + err.toString());
-            }
-            console.log('stdout at reading: ' + stdout.toString());
-            console.log('stderr at reading: ' + stderr.toString());
         })
     }
 }
