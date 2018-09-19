@@ -26,11 +26,11 @@ from caffe.proto import caffe_pb2
 def open_cam_usb(dev, width, height):
     # We want to set width and height here, otherwise we could just do:
     #     return cv2.VideoCapture(dev)
-    gst_str = ("v4l2src device=/dev/video{} ! "
-               "video/x-raw, width=(int){}, height=(int){}, format=(string)RGB ! "
-               "videoconvert ! appsink").format(dev, width, height)
+    #gst_str = ("v4l2src device=/dev/video{} ! "
+     #          "video/x-raw, width=(int){}, height=(int){}, format=(string)RGB ! "
+      #         "videoconvert ! appsink").format(dev, width, height)
 
-    #gst_str = ("nvcamerasrc queue-size=10 sensor-id={} fpsRange='60 60' ! video/x-raw, width=(int){}, height=(int){}, format=(string)RGB ! videoconvert ! appsink").format(dev, width, height)
+    gst_str = ("nvcamerasrc ! video/x-raw(memory:NVMM), width=1280, height=(int)720, format=(string)I420, framerate=(fraction)30/1 ! nvvidconv flip-method=0 ! video/x-raw, format=(string)BGRx ! videoconvert ! video/x-raw, format=(string)BGR ! appsink").format(dev, width, height)
 
     print("Stream started")
     cap = cv2.VideoCapture(gst_str, cv2.CAP_GSTREAMER)
@@ -124,8 +124,10 @@ def draw_bboxes(image, locations):
     for left,top,right,bottom,confidence in locations:
         if confidence==0:
             continue
-        print (confidence)
+	#print(confidence)
+	confidence = str((100/3)*confidence)
         cv2.rectangle(image,(left,top),(right,bottom),(255,0,0),3)
+	cv2.putText(image, confidence, (left, top), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,0,0), 2)
     #cv2.imwrite('bbox.png',image)#test on a single image
     return image
 
@@ -246,7 +248,7 @@ if __name__ == '__main__':
     #vs = VideoStream(src=videoSource).start()
     #time.sleep(2.0)
 
-    cap = open_cam_usb(videoSource,640,480)
+    cap = open_cam_usb(videoSource,1280,720)
     while True:
         #frame = vs.read()
         streamstatus, frame = cap.read()
@@ -260,9 +262,9 @@ if __name__ == '__main__':
             break
 
     cv2.destroyAllWindows()
-    cap.release()
+    frame.release()
     #vs.stop()
 
 
 
-print 'Video took %f seconds.' % (time.time() - script_start_time)
+#print 'Video took %f seconds.' % (time.time() - script_start_time)
