@@ -99,10 +99,11 @@ for i in range(len(image_list)):
                     confidence,
                 )"""
 
-                labelfile.write("Car 0.0 0 0.0 %d %d %d %d 0.0 0.0 0.0 0.0 0.0 0.0 0.0 \r\n" % (int(round(left)),int(round(bottom)),int(round(right)),int(round(top))))
+                labelfile.write("Car"+' '+"0.0"+' '+"0"+' '+"0.0"+' '+"%d"%(int(round(left)))+' '+"%d"%(int(round(top)))+' '+"%d"%(int(round(right)))+' '+"%d"%(int(round(bottom)))+' '+"0.0"+' '+"0.0"+' '+"0.0"+' '+"0.0"+' '+"0.0"+' '+"0.0"+' '+"0.0\n")
 
 
 
     # If we want to write the result to an image
     #os.path.join(dirname,filename) is a function to give a path to a filename
     #cv2.imwrite(os.path.join('/home/airobot/Pictures/', file_name), img)
+
