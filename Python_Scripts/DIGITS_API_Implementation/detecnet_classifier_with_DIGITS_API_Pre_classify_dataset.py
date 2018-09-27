@@ -44,7 +44,7 @@ for i in range(len(image_list)):
     #print(inputimage)
 
     files = {
-        'job_id': (None, '20180913-164832-6451'),
+        'job_id': (None, '20180921-085440-9d21'),
         'image_file': (inputimage, open(inputimage, 'rb')),
         'dont_resize': (None, 'true'),
     }
