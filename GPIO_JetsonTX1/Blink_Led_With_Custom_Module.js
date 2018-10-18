@@ -1,5 +1,5 @@
 // import custom module
-var gpio = require('./custom_module/jetson_gpio.js');
+var gpio = require('gpio-jetson-tx1-tx2');
 
 var pin = 219;
 
